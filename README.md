@@ -15,6 +15,10 @@ Whisker Wars is a Unity game where the player controls a cat that shoots at inco
 
 * Move the player using the configured movement controls
 * The gun fires automatically
+* Left-click an empty grid tile to place a cat. The first cat is available immediately; each successful placement starts a 10-second cooldown.
+* Each placed cat has a gun that automatically fires left toward incoming rats once per second.
+* The top-left indicator shows when another cat is ready. Occupied tiles cannot receive another cat.
+* Placement cooldown uses game time and pauses when the game is paused.
 
 ## Built With
 

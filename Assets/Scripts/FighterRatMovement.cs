@@ -7,7 +7,6 @@ public class FighterRatMovement : MonoBehaviour
     [SerializeField] private float moveSpeed = 2f;
     [SerializeField] private float tileSpacing = 1f;
     [SerializeField] private float pauseBetweenSteps = 1f;
-
     [SerializeField] private Vector3 moveDirection = Vector3.left;
 
     void Start()
@@ -17,9 +16,7 @@ public class FighterRatMovement : MonoBehaviour
 
     IEnumerator MoveAlongGrid()
     {
-        while (true) /* This loop doesn't automatically stop when the rat reaches
-                        the boss or the edge of the board. We'll need to add those
-                        conditions later. */
+        while (true)
         {
             Vector3 startPosition = transform.position;
 
@@ -38,7 +35,6 @@ public class FighterRatMovement : MonoBehaviour
             }
 
             transform.position = targetPosition;
-
             yield return new WaitForSeconds(pauseBetweenSteps);
         }
     }

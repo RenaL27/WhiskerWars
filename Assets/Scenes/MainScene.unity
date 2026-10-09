@@ -397,6 +397,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ratPrefab: {fileID: 8830103272056112403, guid: 005f41704bc5544df9e17d97d267e545, type: 3}
+  fastRatPrefab: {fileID: 8830103272056112403, guid: 4a5b6813e2be44c7be18f4d810f4917d, type: 3}
   spawnPoint: {fileID: 1227932706}
 --- !u!1 &59879779
 GameObject:
@@ -7139,6 +7140,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ratPrefab: {fileID: 8830103272056112403, guid: 005f41704bc5544df9e17d97d267e545, type: 3}
+  fastRatPrefab: {fileID: 8830103272056112403, guid: 4a5b6813e2be44c7be18f4d810f4917d, type: 3}
   spawnPoint: {fileID: 51813523}
 --- !u!4 &1127574235
 Transform:
@@ -9472,6 +9474,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ratPrefab: {fileID: 8830103272056112403, guid: 005f41704bc5544df9e17d97d267e545, type: 3}
+  fastRatPrefab: {fileID: 8830103272056112403, guid: 4a5b6813e2be44c7be18f4d810f4917d, type: 3}
   spawnPoint: {fileID: 143135310}
 --- !u!1 &1430602758
 GameObject:
@@ -10856,6 +10859,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ratPrefab: {fileID: 8830103272056112403, guid: 005f41704bc5544df9e17d97d267e545, type: 3}
+  fastRatPrefab: {fileID: 8830103272056112403, guid: 4a5b6813e2be44c7be18f4d810f4917d, type: 3}
   spawnPoint: {fileID: 869168573}
 --- !u!1 &1699857878
 GameObject:
@@ -10992,6 +10996,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: '::'
   ratPrefab: {fileID: 8830103272056112403, guid: 005f41704bc5544df9e17d97d267e545, type: 3}
+  fastRatPrefab: {fileID: 8830103272056112403, guid: 4a5b6813e2be44c7be18f4d810f4917d, type: 3}
   spawnPoint: {fileID: 1279805687}
 --- !u!1001 &1716215456
 PrefabInstance:
@@ -11273,6 +11278,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1792133373}
+  - component: {fileID: 1792133374}
   m_Layer: 0
   m_Name: Grid Tiles
   m_TagString: Untagged
@@ -14516,6 +14522,22 @@ MeshFilter:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 5235049784533010145}
   m_Mesh: {fileID: 3447038591770236762, guid: a7c5faafae2c3485d926121990fb5bc6, type: 3}
+--- !u!114 &1792133374
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1792133372}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f1a689deee574d2597117465cfea6fc2, type: 3}
+  m_Name:
+  m_EditorClassIdentifier:
+  placementCamera: {fileID: 330585545}
+  catTemplate: {fileID: 422561667, guid: c7d1fbbc3dac44148ea019d443e79317, type: 3}
+  gunPrefab: {fileID: 935515262117744352, guid: 433c119994eb74fd2aadda9973ee407e, type: 3}
+  placementCooldown: 10
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
