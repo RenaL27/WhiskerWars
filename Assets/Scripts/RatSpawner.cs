@@ -16,7 +16,9 @@ public class RatSpawner : MonoBehaviour
     void SpawnRat()
     {
         GameObject prefab = spawnFastRat && fastRatPrefab != null ? fastRatPrefab : ratPrefab;
-        Instantiate(prefab, spawnPoint.position, spawnPoint.rotation);
+        // Preserve the prefab's facing direction relative to the spawn point.
+        Quaternion rotation = spawnPoint.rotation * prefab.transform.localRotation;
+        Instantiate(prefab, spawnPoint.position, rotation);
         spawnFastRat = !spawnFastRat;
     }
 }
