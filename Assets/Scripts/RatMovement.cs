@@ -1,41 +1,24 @@
 using UnityEngine;
-using System.Collections;
 
 public class RatMovement : MonoBehaviour
 {
     [Header("Movement")]
-    [SerializeField] private float moveSpeed = 2f;
-    [SerializeField] private float tileSpacing = 1f;
-    [SerializeField] private float pauseBetweenSteps = 1f;
+    [SerializeField] private float moveSpeed = 0.025f;
     [SerializeField] private Vector3 moveDirection = Vector3.left;
 
-    void Start()
+    public float GetMoveSpeed()
     {
-        StartCoroutine(MoveAlongGrid());
+        return moveSpeed;
     }
 
-    IEnumerator MoveAlongGrid()
+    public void SetMoveSpeed(float newSpeed)
     {
-        while (true)
-        {
-            Vector3 startPosition = transform.position;
+        moveSpeed = newSpeed;
+    }
 
-            Vector3 targetPosition = startPosition
-                + moveDirection.normalized * tileSpacing;
-
-            while (Vector3.Distance(transform.position, targetPosition) > 0.01f)
-            {
-                transform.position = Vector3.MoveTowards(
-                    transform.position,
-                    targetPosition,
-                    moveSpeed * Time.deltaTime
-                );
-
-                yield return null;
-            }
-
-            transform.position = targetPosition;
-            yield return new WaitForSeconds(pauseBetweenSteps);
-        }
+    void Update()
+    {
+        transform.position +=
+            moveDirection.normalized * moveSpeed * Time.deltaTime;
     }
 }
