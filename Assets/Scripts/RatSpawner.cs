@@ -9,7 +9,7 @@ public class RatSpawner : MonoBehaviour
     public Transform[] spawnPoints;
 
     [Header("Spawning")]
-    [SerializeField] private float spawnInterval = 3f;
+    [SerializeField] private float spawnInterval = 4f;
     [SerializeField] private float speedIncreasePerBatch = 0.25f;
 
     [Header("Victory")]
