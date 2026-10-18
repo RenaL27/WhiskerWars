@@ -1,7 +1,7 @@
 using UnityEngine;
 using System.Collections;
 
-public class FighterRatMovement : MonoBehaviour
+public class RatMovement : MonoBehaviour
 {
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 2f;
