@@ -10,7 +10,7 @@ public class CatPlacement : MonoBehaviour
     [Tooltip("Use the Cat prefab asset so deleting scene cats does not break placement.")]
     [SerializeField] private GameObject catTemplate;
     [SerializeField] private GameObject gunPrefab;
-    [SerializeField, Min(0f)] private float placementCooldown = 10f;
+    [SerializeField, Min(0f)] private float placementCooldown = 5f;
 
     private readonly Dictionary<Collider, GameObject> occupants = new();
     private Collider[] tiles;
