@@ -3,8 +3,8 @@ using UnityEngine;
 public class RatSpawner : MonoBehaviour
 {
     public GameObject ratPrefab;
-    public Transform spawnPoint;
     public GameObject fastRatPrefab;
+    public Transform[] spawnPoints;
 
     private bool spawnFastRat;
 
@@ -15,6 +15,9 @@ public class RatSpawner : MonoBehaviour
 
     void SpawnRat()
     {
+        Transform spawnPoint =
+            spawnPoints[Random.Range(0, spawnPoints.Length)];
+
         GameObject prefab = spawnFastRat && fastRatPrefab != null ? fastRatPrefab : ratPrefab;
         // Preserve the prefab's facing direction relative to the spawn point.
         Quaternion rotation = spawnPoint.rotation * prefab.transform.localRotation;
