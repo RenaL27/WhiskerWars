@@ -11,7 +11,8 @@ public class Bullet : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
-        Destroy(collision.gameObject);
+        RatMovement rat = collision.gameObject.GetComponentInParent<RatMovement>();
+        if (rat != null) Destroy(rat.gameObject);
         Destroy(gameObject);
     }
 }

@@ -9,12 +9,30 @@ public class CatPlacement : MonoBehaviour
     [SerializeField] private Camera placementCamera;
     [Tooltip("Use the Cat prefab asset so deleting scene cats does not break placement.")]
     [SerializeField] private GameObject catTemplate;
+    [SerializeField] private GameObject pinkCatTemplate;
     [SerializeField] private GameObject gunPrefab;
     [SerializeField, Min(0f)] private float placementCooldown = 5f;
 
     private readonly Dictionary<Collider, GameObject> occupants = new();
     private Collider[] tiles;
     private float nextPlacementTime;
+    private CatSelectionScreen selectionScreen;
+    private bool usePinkCat;
+
+    public bool PinkCatAvailable => pinkCatTemplate != null;
+    public string SelectedCatName => usePinkCat ? "Pink Cat" : "Regular Cat";
+
+    private void Awake()
+    {
+        GameFlow.EnsureExists();
+        selectionScreen = gameObject.AddComponent<CatSelectionScreen>();
+        selectionScreen.Initialize(this);
+    }
+
+    public void SelectCat(bool pink)
+    {
+        usePinkCat = pink && PinkCatAvailable;
+    }
 
     public float CooldownRemaining => Mathf.Max(0f, nextPlacementTime - Time.time);
 
@@ -28,6 +46,7 @@ public class CatPlacement : MonoBehaviour
         {
             Debug.LogError("Cat placement needs a camera, a cat template, a gun prefab, and tile colliders.", this);
             enabled = false;
+            selectionScreen.enabled = false;
             return;
         }
 
@@ -57,6 +76,9 @@ public class CatPlacement : MonoBehaviour
             !Mouse.current.leftButton.wasPressedThisFrame)
             return;
 
+        if (selectionScreen.BlocksPlacement(Mouse.current.position.ReadValue()))
+            return;
+
         if (EventSystem.current != null && EventSystem.current.IsPointerOverGameObject())
             return;
 
@@ -67,26 +89,38 @@ public class CatPlacement : MonoBehaviour
 
     public bool TryPlaceCat(Collider tile)
     {
-        if (!enabled || tiles == null || Time.timeScale == 0f || CooldownRemaining > 0f ||
+        if (!GameFlow.IsPlaying || !enabled || selectionScreen.IsOpen || selectionScreen.JustClosed || tiles == null || Time.timeScale == 0f || CooldownRemaining > 0f ||
             System.Array.IndexOf(tiles, tile) < 0 ||
             (occupants.TryGetValue(tile, out GameObject occupant) && occupant != null))
             return false;
 
         // Spawn from the prefab asset independently of any cats in the scene.
-        GameObject cat = Instantiate(catTemplate, catTemplate.transform.position,
-            catTemplate.transform.rotation);
-        cat.transform.localScale = catTemplate.transform.lossyScale;
-        cat.name = "Placed Cat";
+        GameObject template = usePinkCat ? pinkCatTemplate : catTemplate;
+        GameObject cat = Instantiate(template, template.transform.position,
+            template.transform.rotation);
+        cat.transform.localScale = template.transform.lossyScale;
+        cat.name = "Placed " + SelectedCatName;
         cat.SetActive(true);
 
         Bounds catBounds = GetVisualBounds(cat);
         Bounds tileBounds = tile.bounds;
+        if (usePinkCat)
+        {
+            float footprint = Mathf.Max(catBounds.size.x / tileBounds.size.x,
+                catBounds.size.z / tileBounds.size.z);
+            if (footprint > 0.001f)
+                cat.transform.localScale *= 0.85f / footprint;
+            catBounds = GetVisualBounds(cat);
+        }
         cat.transform.position += new Vector3(
             tileBounds.center.x - catBounds.center.x,
             tileBounds.max.y - catBounds.min.y,
             tileBounds.center.z - catBounds.center.z);
 
-        AttachGun(cat);
+        if (usePinkCat)
+            cat.AddComponent<PinkCatBlocker>().Initialize(tileBounds);
+        else
+            AttachGun(cat);
 
         occupants[tile] = cat;
         nextPlacementTime = Time.time + placementCooldown;
@@ -121,14 +155,4 @@ public class CatPlacement : MonoBehaviour
         return bounds;
     }
 
-    private void OnGUI()
-    {
-        if (!enabled)
-            return;
-
-        string message = CooldownRemaining > 0f
-            ? $"Next cat in {Mathf.CeilToInt(CooldownRemaining)}s"
-            : "Click an empty tile to place a cat";
-        GUI.Box(new Rect(15f, 15f, 280f, 35f), message);
-    }
 }

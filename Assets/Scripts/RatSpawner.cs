@@ -9,8 +9,8 @@ public class RatSpawner : MonoBehaviour
     public Transform[] spawnPoints;
 
     [Header("Spawning")]
-    [SerializeField] private float spawnInterval = 4f;
-    [SerializeField] private float speedIncreasePerBatch = 0.25f;
+    [SerializeField] private float spawnInterval = 2f;
+    [SerializeField] private float speedIncreasePerBatch = 0.35f;
 
     [Header("Victory")]
     [SerializeField] private GameObject winPanel;
@@ -18,9 +18,13 @@ public class RatSpawner : MonoBehaviour
     private const int MaxRats = 90;
     private const int RatsPerBatch = 6;
 
+    public bool Finished => ratsSpawned >= MaxRats;
+    private float timeToNextSpawn;
     private int ratsSpawned = 0;
     private float normalRatBaseSpeed;
     private bool winDeclared = false;
+
+    private readonly List<Transform> remainingSpawnPoints = new List<Transform>();
 
     private readonly List<GameObject> spawnedRats =
         new List<GameObject>();
@@ -58,7 +62,7 @@ public class RatSpawner : MonoBehaviour
             winPanel.SetActive(false);
         }
 
-        InvokeRepeating(nameof(SpawnRat), 0f, spawnInterval);
+
     }
 
     void SpawnRat()
@@ -69,9 +73,12 @@ public class RatSpawner : MonoBehaviour
             return;
         }
 
-        // Randomly choose one of the available spawn points.
-        Transform spawnPoint =
-            spawnPoints[Random.Range(0, spawnPoints.Length)];
+        // Visit every row once per shuffled cycle so no lane is skipped.
+        if (remainingSpawnPoints.Count == 0)
+            remainingSpawnPoints.AddRange(spawnPoints);
+        int laneIndex = Random.Range(0, remainingSpawnPoints.Count);
+        Transform spawnPoint = remainingSpawnPoints[laneIndex];
+        remainingSpawnPoints.RemoveAt(laneIndex);
 
         if (spawnPoint == null)
         {
@@ -132,6 +139,18 @@ public class RatSpawner : MonoBehaviour
 
     void Update()
     {
+        if (!GameFlow.IsPlaying || Time.timeScale == 0f) return;
+        if (!Finished)
+        {
+            timeToNextSpawn -= Time.deltaTime;
+            if (timeToNextSpawn <= 0f)
+            {
+                SpawnRat();
+                // Later batches arrive closer together, down to one rat every 0.8 seconds.
+                int batchIndex = (ratsSpawned - 1) / RatsPerBatch;
+                timeToNextSpawn = Mathf.Max(0.8f, spawnInterval - batchIndex * 0.1f);
+            }
+        }
         // Victory is possible only after all 90 rats have spawned.
         if (ratsSpawned < MaxRats || winDeclared)
         {
@@ -149,7 +168,7 @@ public class RatSpawner : MonoBehaviour
 
         winDeclared = true;
 
-        Debug.Log("VICTORY! All 90 rats have been defeated.");
+        GameFlow.Instance?.EndRound(true);
 
         if (winPanel != null)
         {
