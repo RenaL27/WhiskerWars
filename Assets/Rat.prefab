@@ -868,6 +868,7 @@ MonoBehaviour:
   tileSpacing: 1
   pauseBetweenSteps: 1
   moveDirection: {x: 1, y: 0, z: 0}
+  useGrayRat: 1
 --- !u!65 &4822308411803068502
 BoxCollider:
   m_ObjectHideFlags: 0

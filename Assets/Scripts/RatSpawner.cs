@@ -15,7 +15,7 @@ public class RatSpawner : MonoBehaviour
     [Header("Victory")]
     [SerializeField] private GameObject winPanel;
 
-    private const int MaxRats = 90;
+    private const int MaxRats = 40;
     private const int RatsPerBatch = 6;
 
     public bool Finished => ratsSpawned >= MaxRats;
@@ -130,7 +130,7 @@ public class RatSpawner : MonoBehaviour
 
         ratsSpawned++;
 
-        // Stop after spawning the 90th rat.
+        // Stop after spawning the 40th rat.
         if (ratsSpawned >= MaxRats)
         {
             CancelInvoke(nameof(SpawnRat));
@@ -151,7 +151,7 @@ public class RatSpawner : MonoBehaviour
                 timeToNextSpawn = Mathf.Max(0.8f, spawnInterval - batchIndex * 0.1f);
             }
         }
-        // Victory is possible only after all 90 rats have spawned.
+        // Victory is possible only after all 40 rats have spawned.
         if (ratsSpawned < MaxRats || winDeclared)
         {
             return;

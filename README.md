@@ -41,7 +41,7 @@ Whisker Wars is a Unity game where the player controls a cat that shoots at inco
 
 The opening screen's red Play button opens How to Play. Continue to Game opens
 cat selection. Gameplay pauses while menus or cat selection are open.
-The spawner sends 90 rats into random lanes, in a normal/normal/fast pattern.
+The spawner sends 40 rats into random lanes, in a normal/normal/fast pattern.
 Every batch of six increases rat speed.
 Defeat every spawned rat to see Mission Success. A rat reaching the finish
 line triggers Mission Failed. Both red Return buttons reset the scene and return

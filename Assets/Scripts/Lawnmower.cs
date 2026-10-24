@@ -3,11 +3,14 @@ using UnityEngine;
 public class Lawnmower : MonoBehaviour
 {
     public float speed = 8f;
+    [SerializeField, Min(0.1f)] private float visualSize = 0.9f;
     private bool sweeping;
     private float leftEdge = -12f;
 
     private void Start()
     {
+        ReplaceSphereWithCat();
+
         CatPlacement grid = FindFirstObjectByType<CatPlacement>();
         if (grid == null) return;
         leftEdge = float.PositiveInfinity;
@@ -44,5 +47,45 @@ public class Lawnmower : MonoBehaviour
                 Destroy(rat.gameObject);
         }
         if (transform.position.x < leftEdge) Destroy(gameObject);
+    }
+
+    private void ReplaceSphereWithCat()
+    {
+        GameObject catModel = Resources.Load<GameObject>("Models/LawnmowerCat");
+        if (catModel == null)
+        {
+            Debug.LogError("Could not load the lawnmower cat model.", this);
+            return;
+        }
+
+        // Keep the original sphere as the behavior's root, but hide its visual.
+        MeshRenderer sphereRenderer = GetComponent<MeshRenderer>();
+        if (sphereRenderer != null)
+            sphereRenderer.enabled = false;
+
+        GameObject visual = Instantiate(catModel, transform);
+        visual.name = "Lawnmower Cat Visual";
+        visual.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
+
+        Renderer[] renderers = visual.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0)
+            return;
+
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            bounds.Encapsulate(renderers[i].bounds);
+
+        float largestDimension = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+        if (largestDimension > 0.001f)
+            visual.transform.localScale *= visualSize / largestDimension;
+
+        // Recalculate after scaling, center it on the old sphere, and rest it on the board.
+        bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            bounds.Encapsulate(renderers[i].bounds);
+        visual.transform.position += new Vector3(
+            transform.position.x - bounds.center.x,
+            transform.position.y - 0.4f - bounds.min.y,
+            transform.position.z - bounds.center.z);
     }
 }

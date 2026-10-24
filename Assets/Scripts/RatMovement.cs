@@ -5,6 +5,7 @@ public class RatMovement : MonoBehaviour
     [Header("Movement")]
     [SerializeField] private float moveSpeed = 0.025f;
     [SerializeField] private Vector3 moveDirection = Vector3.left;
+    [SerializeField] private bool useGrayRat;
 
     public float GetMoveSpeed()
     {
@@ -24,9 +25,45 @@ public class RatMovement : MonoBehaviour
     private Vector3 travelDirection;
     private bool finishHandled;
 
+    private void Awake()
+    {
+        string modelName = useGrayRat ? "GrayRat" : "BrownRat";
+        GameObject ratModel = Resources.Load<GameObject>("Models/" + modelName);
+        if (ratModel == null)
+        {
+            Debug.LogError("Could not load the " + modelName + " model.", this);
+            return;
+        }
+
+        // Keep the existing movement and collider; replace only the old green mesh.
+        foreach (Renderer oldRenderer in GetComponentsInChildren<Renderer>())
+            oldRenderer.enabled = false;
+
+        GameObject visual = Instantiate(ratModel, transform);
+        visual.name = modelName + " Visual";
+        visual.transform.SetLocalPositionAndRotation(Vector3.zero, Quaternion.Euler(-90f, 0f, 0f));
+
+        Renderer[] renderers = visual.GetComponentsInChildren<Renderer>();
+        if (renderers.Length == 0) return;
+        Bounds bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            bounds.Encapsulate(renderers[i].bounds);
+        float largestDimension = Mathf.Max(bounds.size.x, bounds.size.y, bounds.size.z);
+        if (largestDimension > 0.001f)
+            visual.transform.localScale *= 0.8f / largestDimension;
+
+        bounds = renderers[0].bounds;
+        for (int i = 1; i < renderers.Length; i++)
+            bounds.Encapsulate(renderers[i].bounds);
+        visual.transform.position += new Vector3(
+            transform.position.x - bounds.center.x,
+            transform.position.y - 0.4f - bounds.min.y,
+            transform.position.z - bounds.center.z);
+    }
+
     private void Start()
     {
-        bodyRenderers = GetComponentsInChildren<Renderer>();
+        bodyRenderers = System.Array.FindAll(GetComponentsInChildren<Renderer>(), renderer => renderer.enabled);
         travelDirection = moveDirection.normalized;
     }
 

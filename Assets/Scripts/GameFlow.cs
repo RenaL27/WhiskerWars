@@ -26,6 +26,17 @@ public class GameFlow : MonoBehaviour
         instructions = Resources.Load<Texture2D>("GameScreens/Instructions");
         win = Resources.Load<Texture2D>("GameScreens/Win");
         lose = Resources.Load<Texture2D>("GameScreens/Lose");
+        AudioClip song = Resources.Load<AudioClip>("Music/Whisker Wars Main Staff");
+        if (song != null)
+        {
+            AudioSource music = gameObject.AddComponent<AudioSource>();
+            music.clip = song;
+            music.loop = true;
+            music.playOnAwake = false;
+            music.spatialBlend = 0f;
+            music.volume = 0.5f;
+            music.Play();
+        }
         Time.timeScale = 0f;
     }
 
