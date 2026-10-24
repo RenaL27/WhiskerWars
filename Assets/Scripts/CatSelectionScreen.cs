@@ -83,7 +83,8 @@ public class CatSelectionScreen : MonoBehaviour
             GUI.matrix = Matrix4x4.Scale(Vector3.one * UiScale);
             Rect hud = new Rect(10, 10, HudRect.width / UiScale, 84);
             Fill(hud, Background);
-            GUI.Label(new Rect(hud.x + 10, hud.y + 8, hud.width - 100, 28), placement.SelectedCatName, hudText);
+            GUI.Label(new Rect(hud.x + 10, hud.y + 8, hud.width - 100, 28),
+                "Level " + GameFlow.Instance.CurrentLevel + " - " + placement.SelectedCatName, hudText);
             if (GUI.Button(new Rect(hud.xMax - 86, hud.y + 10, 76, 28), "Change", hudButton)) Open();
             string message = placement.CooldownRemaining > 0
                 ? $"Ready in {Mathf.CeilToInt(placement.CooldownRemaining)}s"

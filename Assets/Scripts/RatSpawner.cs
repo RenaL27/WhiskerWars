@@ -15,14 +15,18 @@ public class RatSpawner : MonoBehaviour
     [Header("Victory")]
     [SerializeField] private GameObject winPanel;
 
-    private const int MaxRats = 40;
+    private const int LevelOneRats = 15;
+    private const int LevelTwoRats = 20;
     private const int RatsPerBatch = 6;
 
-    public bool Finished => ratsSpawned >= MaxRats;
+    public bool Finished => ratsSpawned >= ratsToSpawn;
+    private int ratsToSpawn;
+    private int ratHitPoints;
+    private int level;
     private float timeToNextSpawn;
     private int ratsSpawned = 0;
     private float normalRatBaseSpeed;
-    private bool winDeclared = false;
+    private bool levelComplete;
 
     private readonly List<Transform> remainingSpawnPoints = new List<Transform>();
 
@@ -31,6 +35,9 @@ public class RatSpawner : MonoBehaviour
 
     void Start()
     {
+        level = GameFlow.Instance != null ? GameFlow.Instance.CurrentLevel : 1;
+        ratsToSpawn = level == 2 ? LevelTwoRats : LevelOneRats;
+        ratHitPoints = level == 2 ? 2 : 1;
         if (ratPrefab == null || fastRatPrefab == null)
         {
             Debug.LogError("Assign both rat prefabs in the Inspector.");
@@ -67,7 +74,7 @@ public class RatSpawner : MonoBehaviour
 
     void SpawnRat()
     {
-        if (ratsSpawned >= MaxRats)
+        if (Finished)
         {
             CancelInvoke(nameof(SpawnRat));
             return;
@@ -112,6 +119,7 @@ public class RatSpawner : MonoBehaviour
 
         if (movement != null)
         {
+            movement.SetHitPoints(ratHitPoints);
             float speedBonus =
                 normalRatBaseSpeed *
                 speedIncreasePerBatch *
@@ -130,8 +138,8 @@ public class RatSpawner : MonoBehaviour
 
         ratsSpawned++;
 
-        // Stop after spawning the 40th rat.
-        if (ratsSpawned >= MaxRats)
+        // Stop when this level's rats have all spawned.
+        if (Finished)
         {
             CancelInvoke(nameof(SpawnRat));
         }
@@ -151,8 +159,7 @@ public class RatSpawner : MonoBehaviour
                 timeToNextSpawn = Mathf.Max(0.8f, spawnInterval - batchIndex * 0.1f);
             }
         }
-        // Victory is possible only after all 40 rats have spawned.
-        if (ratsSpawned < MaxRats || winDeclared)
+        if (!Finished || levelComplete)
         {
             return;
         }
@@ -166,11 +173,11 @@ public class RatSpawner : MonoBehaviour
             }
         }
 
-        winDeclared = true;
+        levelComplete = true;
+        if (level == 1) GameFlow.Instance?.CompleteLevelOne();
+        else GameFlow.Instance?.EndRound(true);
 
-        GameFlow.Instance?.EndRound(true);
-
-        if (winPanel != null)
+        if (level == 2 && winPanel != null)
         {
             winPanel.SetActive(true);
         }

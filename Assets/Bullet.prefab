@@ -153,4 +153,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7b45a728ce4ec4a499f1bedf0a12cf47, type: 3}
   m_Name: 
   m_EditorClassIdentifier: '::'
+  visualPrefab: {fileID: 919132149155446097, guid: 5fdb22216f26df64ca888adbb4ab8f95, type: 3}
   life: 10

@@ -24,6 +24,16 @@ public class RatMovement : MonoBehaviour
     private Renderer[] bodyRenderers;
     private Vector3 travelDirection;
     private bool finishHandled;
+    private int hitsRemaining = 1;
+
+    public void SetHitPoints(int hits) => hitsRemaining = Mathf.Max(1, hits);
+
+    public void TakeHit()
+    {
+        if (hitsRemaining <= 0) return;
+        hitsRemaining--;
+        if (hitsRemaining == 0) Destroy(gameObject);
+    }
 
     private void Awake()
     {
